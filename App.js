@@ -15,7 +15,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { Camera, useCameraDevices } from 'react-native-vision-camera';
+import { Camera, useCameraDevices, useFrameProcessor } from 'react-native-vision-camera';
 import Reanimated, { useSharedValue, useAnimatedProps, withSpring } from 'react-native-reanimated';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
@@ -74,6 +74,13 @@ export default function App() {
     return { zoom: zoom.value };
   }, [zoom]);
 
+
+  // frameProcessor
+  const frameProcessor = useFrameProcessor(frame => {
+    'worklet';
+    console.log('frameProcessor: ', frame);
+  }, []);
+
   if(!hasPermission) {
     return (
       <View style={styles.container}>
@@ -96,7 +103,8 @@ export default function App() {
         style={StyleSheet.absoluteFill}
         device={device}
         isActive={true} 
-        animatedProps={animatedProps}/>
+        animatedProps={animatedProps}
+        frameProcessor={frameProcessor}/>
       <TouchableOpacity 
         style={styles.zoomButton}
         device={device}
