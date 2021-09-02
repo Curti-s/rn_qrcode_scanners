@@ -6,15 +6,20 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   StyleSheet,
   ActivityIndicator,
   Linking,
   Text,
+  TouchableOpacity,
 } from 'react-native';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
+import Reanimated, { useSharedValue, useAnimatedProps, withSpring } from 'react-native-reanimated';
+
+const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
+Reanimated.addWhitelistedNativeProps({ zoom:true });
 
 const styles = StyleSheet.create({
   container: {
@@ -23,13 +28,27 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     justifyContent: 'center',
+  },
+  zoomButton: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    width: 60,
+    height: 60,
+    marginBottom: 15,
+    borderRadius: 50 / 2,
+    backgroundColor: 'white',
+  },
+  zoomText: {
+    color: 'black', 
+    fontSize: 12,
+    textAlign: 'center'
   }
 });
 
 export default function App() {
-  const [hasPermission, setHasPermission] = React.useState(false);
+  const [hasPermission, setHasPermission] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     Camera.requestCameraPermission().then(status => {
       if(status === 'authorized') {
         setHasPermission(true);
@@ -43,6 +62,17 @@ export default function App() {
   const devices = useCameraDevices();
   const backCamera = devices.back;
   // const frontCamera = devices.front;
+  const device = backCamera;
+
+  // zoom
+  const zoom = useSharedValue(0);
+  const onRandomZoomPress = useCallback(() => {
+    zoom.value = withSpring(Math.random() * 10);
+    console.log('onRandomPress ', zoom.value);
+  }, []);
+  const animatedProps = useAnimatedProps(() => {
+    return { zoom: zoom.value };
+  }, [zoom]);
 
   if(!hasPermission) {
     return (
@@ -62,7 +92,17 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Camera style={StyleSheet.absoluteFill} device={backCamera} isActive={true} />
+      <ReanimatedCamera
+        style={StyleSheet.absoluteFill}
+        device={device}
+        isActive={true} 
+        animatedProps={animatedProps}/>
+      <TouchableOpacity 
+        style={styles.zoomButton}
+        device={device}
+        onPress={onRandomZoomPress}>
+        <Text style={styles.zoomText}>Zoom randomly</Text>
+      </TouchableOpacity>
     </View>
   );
 }
