@@ -11,7 +11,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomeScreen from './screens/HomeScreen';
-import CameraScreen from './screens/CameraScreen';
+import VisionCameraScreen from './screens/VisionCameraScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,7 +21,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen}/>
-        <Stack.Screen name="Visioncamera" component={CameraScreen}/>
+        <Stack.Screen name="Visioncamera" component={VisionCameraScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   )
