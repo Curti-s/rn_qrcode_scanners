@@ -8,7 +8,7 @@ export default function HomeScreen({ navigation }) {
       <View style={{ padding:4, textAlign:'center' }}>
         <Button
           title="Test with react native camera"
-          onPress={() => navigation.navigate('Visioncamera')}/>
+          onPress={() => navigation.navigate('Camera')}/>
       </View>
       <View style={{ padding:4, textAlign:'center' }}>
         <Button 
