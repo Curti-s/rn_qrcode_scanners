@@ -1,12 +1,5 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React, { useState, useEffect, useCallback } from 'react';
+import { Camera, useCameraDevices, useFrameProcessor } from 'react-native-vision-camera';
 import {
   View,
   StyleSheet,
@@ -15,7 +8,6 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { Camera, useCameraDevices, useFrameProcessor } from 'react-native-vision-camera';
 import Reanimated, { useSharedValue, useAnimatedProps, withSpring } from 'react-native-reanimated';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
@@ -45,7 +37,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default function App() {
+export default function CameraScreen() {
   const [hasPermission, setHasPermission] = useState(false);
 
   useEffect(() => {
@@ -76,10 +68,10 @@ export default function App() {
 
 
   // frameProcessor
-  const frameProcessor = useFrameProcessor(frame => {
-    'worklet';
-    console.log('frameProcessor: ', frame);
-  }, []);
+  // const frameProcessor = useFrameProcessor(frame => {
+    // 'worklet';
+    // console.log('frameProcessor: ', frame);
+  // }, []);
 
   if(!hasPermission) {
     return (
@@ -98,19 +90,20 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
+    <Reanimated.View style={styles.container}>
       <ReanimatedCamera
         style={StyleSheet.absoluteFill}
         device={device}
         isActive={true} 
         animatedProps={animatedProps}
-        frameProcessor={frameProcessor}/>
+        />
       <TouchableOpacity 
         style={styles.zoomButton}
         device={device}
         onPress={onRandomZoomPress}>
         <Text style={styles.zoomText}>Zoom randomly</Text>
       </TouchableOpacity>
-    </View>
+    </Reanimated.View>
   );
 }
+
