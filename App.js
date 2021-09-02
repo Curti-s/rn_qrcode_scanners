@@ -7,7 +7,6 @@
  */
 
 import React from 'react';
-import type {Node} from 'react';
 import {
   View,
   StyleSheet,
@@ -20,8 +19,11 @@ import { Camera, useCameraDevices } from 'react-native-vision-camera';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center'
+    backgroundColor: 'black',
   },
+  textStyle: {
+    justifyContent: 'center',
+  }
 });
 
 export default function App() {
@@ -39,17 +41,18 @@ export default function App() {
   }, []);
 
   const devices = useCameraDevices();
-  const device = devices.back;
+  const backCamera = devices.back;
+  // const frontCamera = devices.front;
 
   if(!hasPermission) {
     return (
       <View style={styles.container}>
-        <Text>No permission</Text>
+        <Text style={styles.textStyle}>No permission</Text>
       </View>
     );
   }
 
-  if(device == null) {
+  if(!backCamera) {
     return (
       <View style={styles.container}>
         <ActivityIndicator />
@@ -58,8 +61,8 @@ export default function App() {
   }
 
   return (
-    <View>
-      <Camera style={StyleSheet.absoluteFill} device={device} />
+    <View style={styles.container}>
+      <Camera style={StyleSheet.absoluteFill} device={backCamera} isActive={true} />
     </View>
   );
 }
