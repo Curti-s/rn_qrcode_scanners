@@ -12,6 +12,7 @@ import com.facebook.react.bridge.JSIModulePackage;
 import com.swmansion.reanimated.ReanimatedJSIModulePackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -52,6 +53,9 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    
+    // register VisionCamera Frame Processor Plugins here.
+    FrameProcessorPlugin.register(new ExampleFrameProcessor());
   }
 
   /**

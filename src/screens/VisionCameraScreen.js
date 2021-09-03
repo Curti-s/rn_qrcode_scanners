@@ -37,6 +37,12 @@ const styles = StyleSheet.create({
   }
 });
 
+// frame processor qr code scanner
+function scanQRCodes(frame) {
+  'worklet';
+  return __scanQRcodes(frame);
+}
+
 export default function VisionCameraScreen() {
   const [hasPermission, setHasPermission] = useState(false);
 
@@ -68,10 +74,11 @@ export default function VisionCameraScreen() {
 
 
   // frameProcessor
-  // const frameProcessor = useFrameProcessor(frame => {
-    // 'worklet';
-    // console.log('frameProcessor: ', frame);
-  // }, []);
+  const frameProcessor = useFrameProcessor(frame => {
+    'worklet';
+    const qrCodes = scanQRCodes(frame);
+    console.log('frameProcessor: ', qrCodes);
+  }, []);
 
   if(!hasPermission) {
     return (
@@ -96,6 +103,7 @@ export default function VisionCameraScreen() {
         device={device}
         isActive={true} 
         animatedProps={animatedProps}
+        frameProcessor={frameProcessor}
         />
       <TouchableOpacity 
         style={styles.zoomButton}

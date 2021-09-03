@@ -189,6 +189,9 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
+    implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:16.2.1'
+
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
@@ -209,6 +212,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation "androidx.camera:camera-core:1.1.0-alpha08"
 }
 
 // Run this once to be able to run the application with BUCK
