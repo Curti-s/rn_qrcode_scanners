@@ -53,9 +53,6 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-    
-    // register VisionCamera Frame Processor Plugins here.
-    FrameProcessorPlugin.register(new ExampleFrameProcessor());
   }
 
   /**
