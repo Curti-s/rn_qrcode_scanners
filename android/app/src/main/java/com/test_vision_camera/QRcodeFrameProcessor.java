@@ -76,6 +76,6 @@ public class QRcodeFrameProcessor extends FrameProcessorPlugin {
   }
 
   QRcodeFrameProcessor() {
-    super("scanQRCodes");
+    super("scanQRcodes");
   }
 }
