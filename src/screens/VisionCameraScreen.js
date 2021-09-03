@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Reanimated, { useSharedValue, useAnimatedProps, withSpring } from 'react-native-reanimated';
+import { scanQRcodes } from '../frameprocessors/QRcodeFrameProcessor';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({ zoom:true });
@@ -36,12 +37,6 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   }
 });
-
-// frame processor qr code scanner
-function scanQRCodes(frame) {
-  'worklet';
-  return __scanQRcodes(frame);
-}
 
 export default function VisionCameraScreen() {
   const [hasPermission, setHasPermission] = useState(false);
@@ -76,8 +71,13 @@ export default function VisionCameraScreen() {
   // frameProcessor
   const frameProcessor = useFrameProcessor(frame => {
     'worklet';
-    const qrCodes = scanQRCodes(frame);
-    console.log('frameProcessor: ', qrCodes);
+
+    try {
+      const qrCodes = scanQRcodes(frame);
+      console.log('frameProcessor: ', qrCodes);
+    } catch(err) {
+      console.error(`Frameprocessor failed: ${err}`);
+    }
   }, []);
 
   if(!hasPermission) {
