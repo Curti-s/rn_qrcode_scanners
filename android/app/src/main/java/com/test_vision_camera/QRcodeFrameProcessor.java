@@ -34,9 +34,23 @@ public class QRcodeFrameProcessor extends FrameProcessorPlugin {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    Image mediaImage = frame.getImage();
+    // Image mediaImage = frame.getImage();
 
-    return scanBarcodes(mediaImage, frame);
+    WritableNativeMap map = new WritableNativeMap();
+    map.putString("example_str", "Test");
+    map.putBoolean("example_bool", true);
+    map.putDouble("example_double", 5.3);
+
+    WritableNativeArray array = new WritableNativeArray();
+    array.pushString("Hello!");
+    array.pushBoolean(true);
+    array.pushDouble(17.38);
+
+    map.putArray("example_array", array);
+    return map;
+
+
+    // return scanBarcodes(mediaImage, frame);
   }
 
   private WritableNativeArray scanBarcodes(Image mediaImage, ImageProxy frame) {
