@@ -189,8 +189,7 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
-    implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:16.2.1'
-
+    implementation "com.google.mlkit:barcode-scanning:17.0.0"
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
