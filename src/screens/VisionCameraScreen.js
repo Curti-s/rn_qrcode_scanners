@@ -14,29 +14,6 @@ import { scanQRcodes } from '../frameprocessors/QRcodeFrameProcessor';
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({ zoom:true });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'black',
-  },
-  textStyle: {
-    justifyContent: 'center',
-  },
-  zoomButton: {
-    justifyContent: 'center',
-    alignSelf: 'center',
-    width: 60,
-    height: 60,
-    marginBottom: 15,
-    borderRadius: 50 / 2,
-    backgroundColor: 'white',
-  },
-  zoomText: {
-    color: 'black', 
-    fontSize: 12,
-    textAlign: 'center'
-  }
-});
 
 export default function VisionCameraScreen() {
   const [hasPermission, setHasPermission] = useState(false);
@@ -115,3 +92,26 @@ export default function VisionCameraScreen() {
   );
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
+  textStyle: {
+    justifyContent: 'center',
+  },
+  zoomButton: {
+    flex: 0,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: 'center',
+    margin: 20,
+  },
+  zoomText: {
+    color: 'black', 
+    fontSize: 12,
+    textAlign: 'center'
+  }
+});
