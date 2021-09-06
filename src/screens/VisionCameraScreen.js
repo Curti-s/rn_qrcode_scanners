@@ -50,6 +50,7 @@ export default function VisionCameraScreen() {
     'worklet';
 
     try {
+      console.log('frame arrived', frame);
       const qrCodes = scanQRcodes(frame);
       console.log('frameProcessor: ', qrCodes);
     } catch(err) {
@@ -74,21 +75,23 @@ export default function VisionCameraScreen() {
   }
 
   return (
-    <Reanimated.View style={styles.container}>
-      <ReanimatedCamera
-        style={StyleSheet.absoluteFill}
-        device={device}
-        isActive={true} 
-        animatedProps={animatedProps}
-        frameProcessor={frameProcessor}
-        />
-      <TouchableOpacity 
-        style={styles.zoomButton}
-        device={device}
-        onPress={onRandomZoomPress}>
-        <Text style={styles.zoomText}>Zoom randomly</Text>
-      </TouchableOpacity>
-    </Reanimated.View>
+    <View style={styles.container}>
+      <Reanimated.View style={StyleSheet.absoluteFill}>
+        <ReanimatedCamera
+          style={StyleSheet.absoluteFill}
+          device={device}
+          isActive={true} 
+          animatedProps={animatedProps}
+          frameProcessor={frameProcessor}
+          />
+          <TouchableOpacity 
+          style={styles.zoomButton}
+          device={device}
+          onPress={onRandomZoomPress}>
+          <Text style={styles.zoomText}>Zoom randomly</Text>
+        </TouchableOpacity>
+      </Reanimated.View>
+    </View>
   );
 }
 
