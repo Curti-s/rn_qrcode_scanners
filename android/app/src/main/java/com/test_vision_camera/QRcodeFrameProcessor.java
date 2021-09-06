@@ -32,9 +32,9 @@ public class QRcodeFrameProcessor extends FrameProcessorPlugin {
     for (Object param : params) {
       Log.d("ExampleFrameProcessor", "  -> " + (param == null ? "(null)" : param.toString() + " (" + param.getClass().getName() + ")"));
     }
-
+    
     @SuppressLint("UnsafeOptInUsageError")
-    // Image mediaImage = frame.getImage();
+    Image mediaImage = frame.getImage();
 
     WritableNativeMap map = new WritableNativeMap();
     map.putString("example_str", "Test");
@@ -67,28 +67,38 @@ public class QRcodeFrameProcessor extends FrameProcessorPlugin {
       BarcodeScanner scanner = BarcodeScanning.getClient(options);
       // end get_detector
 
-      // start run_detector
-      Task<List<Barcode>> task = scanner.process(image);
-
-      WritableNativeArray array =  new WritableNativeArray();
       try {
-        List<Barcode> barcodes = Tasks.await(task); // synchronous
-//        this.scannerSuccessListener(task, barcodes)
+        // start run_detector
+        Task<List<Barcode>>result = scanner.process(image)
+          .addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
+            @Override
+            public void onSuccess(List<Barcode> barcodes) {
+              // task completed successfully
+              for (Barcode barcode: barcodes) {
+                Rect bounds = barcode.getBoundingBox();
+                Point[] corners = barcode.getCornerPoints();
+                String rawValue = barcode.getRawValue();
+                int valueType = barcode.getValueType();
 
-        WritableMap map = new WritableNativeMap();
-        for(Barcode barcode: barcodes) {
-          Rect bounds = barcode.getBoundingBox();
-          Point[] corners = barcode.getCornerPoints();
-
-          String rawValue = barcode.getRawValue();
-          int valueType = barcode.getValueType();
-
-//          map.putMap();
-        }
-
-        array.pushMap(map);
-        return array;
-      } catch (Exception e) {
+                switch(valueType) {
+                  case Barcode.TYPE_URL:
+                    String title = barcode.getUrl().getTitle();
+                    String url = barcode.getUrl().getUrl();
+                    break;
+                }
+              }
+            }
+          })
+        .addOnFailureListener(new OnFailureListener() {
+          @Override
+          public void onFailure(@NonNull Exception e) {
+            // task failed
+            e.printStackTrace();
+          }
+        });
+        // end run_detector
+        return result;
+      } catch(Exception e) {
         e.printStackTrace();
       }
     }
