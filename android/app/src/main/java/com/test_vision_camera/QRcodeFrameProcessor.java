@@ -27,72 +27,50 @@ import java.util.List;
 public class QRcodeFrameProcessor extends FrameProcessorPlugin {
   @Override
   public Object callback(ImageProxy frame, Object[] params) {
-    Log.d("ExampleFrameProcessor", frame.getWidth() + " x " + frame.getHeight() + " Image with format #" + frame.getFormat() + ". Logging " + params.length + " parameters:");
+      Image mediaImage = frame.getImage();
 
-    for (Object param : params) {
-      Log.d("ExampleFrameProcessor", "  -> " + (param == null ? "(null)" : param.toString() + " (" + param.getClass().getName() + ")"));
-    }
+      if (mediaImage == null) {
+          return null;
+      }
 
-    @SuppressLint("UnsafeOptInUsageError")
-    // Image mediaImage = frame.getImage();
-
-    WritableNativeMap map = new WritableNativeMap();
-    map.putString("example_str", "Test");
-    map.putBoolean("example_bool", true);
-    map.putDouble("example_double", 5.3);
-
-    WritableNativeArray array = new WritableNativeArray();
-    array.pushString("Hello!");
-    array.pushBoolean(true);
-    array.pushDouble(17.38);
-
-    map.putArray("example_array", array);
-    return map;
-
-
-    // return scanBarcodes(mediaImage, frame);
+      InputImage image = InputImage.fromMediaImage(mediaImage, frame.getImageInfo().getRotationDegrees());
+      return scanBarcodes(image);
   }
 
-  private WritableNativeArray scanBarcodes(Image mediaImage, ImageProxy frame) {
-    if(mediaImage != null) {
-      InputImage image = InputImage.fromMediaImage(mediaImage, frame.getImageInfo().getRotationDegrees());
-      // start detector options
+  private WritableNativeArray scanBarcodes(InputImage image) {
       BarcodeScannerOptions options = new BarcodeScannerOptions
               .Builder()
               .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
               .build();
-      // end detector options
 
-      // start get detector
       BarcodeScanner scanner = BarcodeScanning.getClient(options);
-      // end get_detector
 
-      // start run_detector
       Task<List<Barcode>> task = scanner.process(image);
 
+      // this is what is being returned to the Frame processor in JS land
       WritableNativeArray array =  new WritableNativeArray();
       try {
-        List<Barcode> barcodes = Tasks.await(task); // synchronous
-//        this.scannerSuccessListener(task, barcodes)
+          List<Barcode> barcodes = Tasks.await(task); // synchronous
+        /* there is an async option...we could consider implementing that if synchronous turns out to be slow */
 
-        WritableMap map = new WritableNativeMap();
-        for(Barcode barcode: barcodes) {
-          Rect bounds = barcode.getBoundingBox();
-          Point[] corners = barcode.getCornerPoints();
+          for(Barcode barcode: barcodes) {
+              WritableMap map = new WritableNativeMap();
+              int valueType = barcode.getValueType();
 
-          String rawValue = barcode.getRawValue();
-          int valueType = barcode.getValueType();
+              // only check for barcode of type text
+              if(valueType == Barcode.TYPE_TEXT) {
+                  String rawValue = barcode.getRawValue();
+                  map.putString("barcode", rawValue);
+              }
+              array.pushMap(map);
+          }
 
-//          map.putMap();
-        }
-
-        array.pushMap(map);
-        return array;
+          return array;
       } catch (Exception e) {
-        e.printStackTrace();
+          e.printStackTrace();
       }
-    }
-    return null;
+
+      return null;
   }
 
   QRcodeFrameProcessor() {

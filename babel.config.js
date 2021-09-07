@@ -1,11 +1,11 @@
 module.exports = {
   presets: ['module:metro-react-native-babel-preset'],
-  plugins: [ 
+  plugins: [
     [
       'react-native-reanimated/plugin',
-      { 
+      {
         globals: ['__scanQRcodes'],
-      }
+      },
     ],
-  ]
+  ],
 };
