@@ -75,7 +75,7 @@ export default function VisionCameraScreen() {
           isActive={true}
           animatedProps={animatedProps}
           frameProcessor={frameProcessor}
-          frameProcessorFps={10}
+          frameProcessorFps={30}
           fps={5}
         />
       </Reanimated.View>
