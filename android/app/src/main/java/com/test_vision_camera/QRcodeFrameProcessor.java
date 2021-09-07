@@ -33,8 +33,8 @@ public class QRcodeFrameProcessor extends FrameProcessorPlugin {
           return null;
       }
 
-      return scanBarcodes(image);
       InputImage image = InputImage.fromMediaImage(mediaImage, frame.getImageInfo().getRotationDegrees());
+      return scanBarcodes(image);
   }
 
   private WritableNativeArray scanBarcodes(InputImage image) {
