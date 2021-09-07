@@ -53,8 +53,8 @@ public class QRcodeFrameProcessor extends FrameProcessorPlugin {
           List<Barcode> barcodes = Tasks.await(task); // synchronous
         /* there is an async option...we could consider implementing that if synchronous turns out to be slow */
 
-          WritableMap map = new WritableNativeMap();
           for(Barcode barcode: barcodes) {
+              WritableMap map = new WritableNativeMap();
               int valueType = barcode.getValueType();
 
               // only check for barcode of type text
@@ -62,9 +62,9 @@ public class QRcodeFrameProcessor extends FrameProcessorPlugin {
                   String rawValue = barcode.getRawValue();
                   map.putString("barcode", rawValue);
               }
+              array.pushMap(map);
           }
 
-          array.pushMap(map);
           return array;
       } catch (Exception e) {
           e.printStackTrace();
