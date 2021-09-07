@@ -62,6 +62,8 @@ public class QRcodeFrameProcessor extends FrameProcessorPlugin {
                   String rawValue = barcode.getRawValue();
                   map.putString("barcode", rawValue);
               }
+              // TODO data to be returned
+              // [{"bounds": {"origin": [Object], "size": [Object]}, "data": "CYL-6-2020-A-0", "dataRaw": "CYL-6-2020-A-0", "format": "QR_CODE", "type": "TEXT"}]
               array.pushMap(map);
           }
 
