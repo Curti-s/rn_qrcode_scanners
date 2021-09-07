@@ -50,7 +50,7 @@ export default function VisionCameraScreen() {
     'worklet';
 
     try {
-      console.log('frame arrived');
+      console.log('frame arrived', frame);
       const qrCodes = scanQRcodes(frame);
       console.log('frameProcessor: ', qrCodes);
     } catch(err) {
