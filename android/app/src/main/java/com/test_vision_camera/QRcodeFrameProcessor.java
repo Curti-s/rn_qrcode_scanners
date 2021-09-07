@@ -27,10 +27,11 @@ import java.util.List;
 public class QRcodeFrameProcessor extends FrameProcessorPlugin {
   @Override
   public Object callback(ImageProxy frame, Object[] params) {
+    Log.d("ExampleFrameProcessor", "width " + frame.getWidth() + " x " + "height " + frame.getHeight() + " Image with format #" + frame.getFormat() + ". Logging " + params.length + " parameters:");
     for (Object param : params) {
-      Log.d("ExampleFrameProcessor", "  -> " + (param == null ? "(null)" : param.toString() + " (" + param.getClass().getName() + ")"));
+      Log.d("ExampleFrameProcessor", "parameters info  -> " + (param == null ? "(null)" : param.toString() + " (" + param.getClass().getName() + ")"));
     }
-    
+
     @SuppressLint("UnsafeOptInUsageError")
     Image mediaImage = frame.getImage();
 
