@@ -3,7 +3,8 @@ import { NativeModules } from 'react-native';
 const { BarCodeApiModule } = NativeModules;
 
 interface BarCodeApiModuleInterface {
-  scanBarCodes(name: string, location: string): void;
+  scanBarcodes(name: string, location: string): [];
+  addScannerListener(barcodes: []): void;
 }
 
 export default BarCodeApiModule as BarCodeApiModuleInterface;
