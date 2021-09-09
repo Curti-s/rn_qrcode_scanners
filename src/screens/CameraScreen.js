@@ -33,7 +33,9 @@ export default class CameraScreen extends PureComponent {
                 buttonNegative: 'Cancel',
             }}
             onGoogleVisionBarcodesDetected={({ barcodes }) => {
+              const startTime = Date.now();
               console.log('barcodes ', JSON.stringify(barcodes));
+              console.log('Elapsed Time: ', Date.now() - startTime, '[ms] ');
             }}
             captureAudio={false}
             />
