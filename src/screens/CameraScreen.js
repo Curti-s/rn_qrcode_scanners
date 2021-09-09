@@ -33,7 +33,7 @@ export default class CameraScreen extends PureComponent {
                 buttonNegative: 'Cancel',
             }}
             onGoogleVisionBarcodesDetected={({ barcodes }) => {
-              console.log('barcodes ', barcodes);
+              console.log('barcodes ', JSON.stringify(barcodes));
             }}
             captureAudio={false}
             />

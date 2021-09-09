@@ -27,6 +27,7 @@ import java.util.List;
 public class QRcodeFrameProcessor extends FrameProcessorPlugin {
   @Override
   public Object callback(ImageProxy frame, Object[] params) {
+      @SuppressLint("UnsafeOptInUsageError")
       Image mediaImage = frame.getImage();
 
       if (mediaImage == null) {
@@ -60,10 +61,12 @@ public class QRcodeFrameProcessor extends FrameProcessorPlugin {
               // only check for barcode of type text
               if(valueType == Barcode.TYPE_TEXT) {
                   String rawValue = barcode.getRawValue();
-                  map.putString("barcode", rawValue);
+                  map.putString("dataRaw", rawValue);
+                  map.putInt("type", valueType);
+                  map.putInt("format", Barcode.FORMAT_QR_CODE);
               }
               // TODO data to be returned
-              // [{"bounds": {"origin": [Object], "size": [Object]}, "data": "CYL-6-2020-A-0", "dataRaw": "CYL-6-2020-A-0", "format": "QR_CODE", "type": "TEXT"}]
+              // "bounds":{"size":{"height":81,"width":46.125},"origin":{"y":113,"x":184.78125}},"format":"QR_CODE","dataRaw":"CYL-6-2020-A-0","type":"TEXT","data":"CYL-6-2020-A-0"}
               array.pushMap(map);
           }
 
