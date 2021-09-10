@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   Camera,
   useCameraDevices,
   useFrameProcessor,
+  FrameProcessorPerformanceSuggestion,
 } from 'react-native-vision-camera';
 import {View, StyleSheet, ActivityIndicator, Linking, Text} from 'react-native';
 import Reanimated, {
@@ -51,6 +52,10 @@ export default function VisionCameraScreen() {
     }
   }, []);
 
+  const onFrameProcessorSuggestionAvailable = useCallback((suggestion: FrameProcessorPerformanceSuggestion) => {
+    console.log(`Suggestion available! ${suggestion.type}: Can do ${suggestion.suggestedFrameProcessorFps} FPS`);
+  }, []);
+
   if (!hasPermission) {
     return (
       <View style={styles.container}>
@@ -67,6 +72,7 @@ export default function VisionCameraScreen() {
     );
   }
 
+
   return (
     <View style={styles.container}>
       <Reanimated.View style={StyleSheet.absoluteFill}>
@@ -78,6 +84,7 @@ export default function VisionCameraScreen() {
           frameProcessor={frameProcessor}
           frameProcessorFps={60}
           fps={5}
+          onFrameProcessorSuggestionAvailable={onFrameProcessorSuggestionAvailable}
         />
       </Reanimated.View>
     </View>
