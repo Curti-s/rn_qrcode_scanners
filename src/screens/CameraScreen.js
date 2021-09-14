@@ -7,6 +7,12 @@ export default function CameraScreen({navigation}) {
     return null;
   }
 
+  const onRead = ({ barcodes }) => {
+    const startTime = Date.now();
+    console.log('barcodes ', barcodes.map((i) => i.data));
+    console.log('Elapsed Time: ', Date.now() - startTime, '[ms] ');
+  }
+
   return (
     <View style={styles.container}>
       <RNCamera
@@ -19,11 +25,7 @@ export default function CameraScreen({navigation}) {
           buttonPositive: 'Ok',
           buttonNegative: 'Cancel',
         }}
-        onGoogleVisionBarcodesDetected={({barcodes}) => {
-          const startTime = Date.now();
-          console.log('barcodes ', barcodes.map((i) => i.data));
-          console.log('Elapsed Time: ', Date.now() - startTime, '[ms] ');
-        }}
+        onGoogleVisionBarcodesDetected={onRead}
         captureAudio={false}
       />
     </View>
