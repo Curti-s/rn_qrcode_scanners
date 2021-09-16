@@ -9,8 +9,8 @@ export default function CameraScreen({navigation}) {
 
   const onRead = ({ barcodes }) => {
     const startTime = Date.now();
-    console.log('barcodes ', barcodes.map((i) => i.data));
-    console.log('Elapsed Time: ', Date.now() - startTime, '[ms] ');
+    console.log();
+    console.log('Elapsed Time: ', Date.now() - startTime, '[ms], barcodes ', barcodes.map((i) => i.data));
   }
 
   return (
@@ -18,7 +18,7 @@ export default function CameraScreen({navigation}) {
       <RNCamera
         style={styles.preview}
         type={RNCamera.Constants.Type.back}
-        flashMode={RNCamera.Constants.FlashMode.on}
+        flashMode={RNCamera.Constants.FlashMode.off}
         androidCameraPermissionOptions={{
           title: 'Permission to use camera',
           message: 'Camera permissions required',
@@ -27,6 +27,7 @@ export default function CameraScreen({navigation}) {
         }}
         onGoogleVisionBarcodesDetected={onRead}
         captureAudio={false}
+        useNativeZoom
       />
     </View>
   );
