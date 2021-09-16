@@ -9,14 +9,28 @@ import {View, StyleSheet, ActivityIndicator, Linking, Text} from 'react-native';
 import Reanimated, {
   useSharedValue,
   useAnimatedProps,
+  useAnimatedGestureHandler,
+  Extrapolate,
+  interpolate,
 } from 'react-native-reanimated';
+import {
+  PinchGestureHandler,
+} from 'react-native-gesture-handler';
+import { useIsFocused } from '@react-navigation/native';
 import {scanQRcodes} from '../frameprocessors/QRcodeFrameProcessor';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({zoom: true});
 
+const SCALE_FULL_ZOOM = 3;
+const MAX_ZOOM_FACTOR = 20;
 export default function VisionCameraScreen() {
   const [hasPermission, setHasPermission] = useState(false);
+  const zoom = useSharedValue(0);
+
+  // check if screen is focused
+  const isFocused = useIsFocused();
+  const isActive = isFocused || false;
 
   useEffect(() => {
     Camera.requestCameraPermission().then(status => {
@@ -33,13 +47,6 @@ export default function VisionCameraScreen() {
   const backCamera = devices.back;
   const device = backCamera;
 
-  // zoom
-  const zoom = useSharedValue(0);
-
-  const animatedProps = useAnimatedProps(() => {
-    return {zoom: zoom.value};
-  }, [zoom]);
-
   // frameProcessor
   const frameProcessor = useFrameProcessor(frame => {
     'worklet';
@@ -51,6 +58,49 @@ export default function VisionCameraScreen() {
       console.error(`Frameprocessor failed: ${err}`);
     }
   }, []);
+
+  // zoom
+  const animatedProps = useAnimatedProps(() => {
+    return {zoom: zoom.value};
+  }, [zoom]);
+
+  //#region Animated Zoom
+  // This just maps the zoom factor to a percentage value.
+  // so e.g. for [min, neutr., max] values [1, 2, 128] this would result in [0, 0.0081, 1]
+  const minZoom = device?.minZoom ?? 1;
+  const maxZoom = Math.min(device?.maxZoom ?? 1, MAX_ZOOM_FACTOR);
+
+  const cameraAnimatedProps = useAnimatedProps(() => {
+    const z = Math.max(Math.min(zoom.value, maxZoom), minZoom);
+    return {
+      zoom: z,
+    };
+  }, [maxZoom, minZoom, zoom]);
+  //#endregion
+
+  //#region Effects
+  const neutralZoom = device?.neutralZoom ?? 1;
+  useEffect(() => {
+    // Run everytime the neutralZoomScaled value changes. (reset zoom when device changes)
+    zoom.value = neutralZoom;
+  }, [neutralZoom, zoom]);
+  //#endregion
+
+  //#region Pinch to Zoom Gesture
+  // The gesture handler maps the linear pinch gesture (0 - 1) to an exponential curve since a camera's zoom
+  // function does not appear linear to the user. (aka zoom 0.1 -> 0.2 does not look equal in difference as 0.8 -> 0.9)
+  const onPinchGesture = useAnimatedGestureHandler({
+    onStart: (_, context) => {
+      context.startZoom = zoom.value;
+    },
+    onActive: (event, context) => {
+      // we're trying to map the scale gesture to a linear zoom here
+      const startZoom = context.startZoom ?? 0;
+      const scale = interpolate(event.scale, [1 - 1 / SCALE_FULL_ZOOM, 1, SCALE_FULL_ZOOM], [-1, 0, 1], Extrapolate.CLAMP);
+      zoom.value = interpolate(scale, [-1, 0, 1], [minZoom, startZoom, maxZoom], Extrapolate.CLAMP);
+    },
+  });
+  //#endregion
 
   const onFrameProcessorSuggestionAvailable = useCallback((suggestion: FrameProcessorPerformanceSuggestion) => {
     console.log(`Suggestion available! ${suggestion.type}: Can do ${suggestion.suggestedFrameProcessorFps} FPS`);
@@ -72,21 +122,32 @@ export default function VisionCameraScreen() {
     );
   }
 
+  if (device != null && device?.format != null) {
+    console.log(
+      `Re-rendering camera page with ${isActive ? 'active' : 'inactive'} camera. ` +
+        `Device: "${device.name}" (${format.photoWidth}x${format.photoHeight} @ ${fps}fps)`,
+    );
+  } else {
+    console.log('re-rendering camera page without active camera');
+  }
 
   return (
     <View style={styles.container}>
-      <Reanimated.View style={StyleSheet.absoluteFill}>
-        <ReanimatedCamera
-          style={StyleSheet.absoluteFill}
-          device={device}
-          isActive={true}
-          animatedProps={animatedProps}
-          frameProcessor={frameProcessor}
-          frameProcessorFps={60}
-          fps={5}
-          onFrameProcessorSuggestionAvailable={onFrameProcessorSuggestionAvailable}
-        />
-      </Reanimated.View>
+      <PinchGestureHandler onGestureEvent={onPinchGesture} enabled={isActive}>
+        <Reanimated.View style={StyleSheet.absoluteFill}>
+          <ReanimatedCamera
+            style={StyleSheet.absoluteFill}
+            device={device}
+            isActive={isActive}
+            animatedProps={animatedProps}
+            frameProcessor={frameProcessor}
+            frameProcessorFps={60}
+            fps={5}
+            animatedProps={cameraAnimatedProps}
+            onFrameProcessorSuggestionAvailable={onFrameProcessorSuggestionAvailable}
+            />
+        </Reanimated.View>
+      </PinchGestureHandler>
     </View>
   );
 }
