@@ -160,8 +160,7 @@ export default function VisionCameraScreen() {
               isActive={isActive}
               animatedProps={animatedProps}
               frameProcessor={frameProcessor}
-              frameProcessorFps={60}
-              fps={5}
+              frameProcessorFps={30}
               animatedProps={cameraAnimatedProps}
               onFrameProcessorSuggestionAvailable={onFrameProcessorSuggestionAvailable}/>
           </TapGestureHandler>
