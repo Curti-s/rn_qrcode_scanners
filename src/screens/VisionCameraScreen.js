@@ -1,11 +1,22 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from 'react';
 import {
   Camera,
   useCameraDevices,
   useFrameProcessor,
   FrameProcessorPerformanceSuggestion,
 } from 'react-native-vision-camera';
-import {View, StyleSheet, ActivityIndicator, Linking, Text} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Linking,
+  Text,
+} from 'react-native';
 import Reanimated, {
   useSharedValue,
   useAnimatedProps,
@@ -15,6 +26,8 @@ import Reanimated, {
 } from 'react-native-reanimated';
 import {
   PinchGestureHandler,
+  TapGestureHandler,
+  State,
 } from 'react-native-gesture-handler';
 import { useIsFocused } from '@react-navigation/native';
 import {scanQRcodes} from '../frameprocessors/QRcodeFrameProcessor';
@@ -25,6 +38,7 @@ Reanimated.addWhitelistedNativeProps({zoom: true});
 const SCALE_FULL_ZOOM = 3;
 const MAX_ZOOM_FACTOR = 20;
 export default function VisionCameraScreen() {
+  const camera = useRef(null);
   const [hasPermission, setHasPermission] = useState(false);
   const zoom = useSharedValue(0);
 
@@ -102,6 +116,18 @@ export default function VisionCameraScreen() {
   });
   //#endregion
 
+  // focus
+  const onTapToFocus = useCallback(async event => {
+    try {
+      if(event.nativeEvent.state === State.ACTIVE && device?.supportsFocus) {
+        await camera.current.focus({ x:event.nativeEvent.absoluteX, y:event.nativeEvent.absoluteY });
+      }
+    } catch(err) {
+      console.error(`focusing: error occurred ${err}`);
+    }
+  });
+  // end focus
+
   const onFrameProcessorSuggestionAvailable = useCallback((suggestion: FrameProcessorPerformanceSuggestion) => {
     console.log(`Suggestion available! ${suggestion.type}: Can do ${suggestion.suggestedFrameProcessorFps} FPS`);
   }, []);
@@ -122,32 +148,26 @@ export default function VisionCameraScreen() {
     );
   }
 
-  if (device != null && device?.format != null) {
-    console.log(
-      `Re-rendering camera page with ${isActive ? 'active' : 'inactive'} camera. ` +
-        `Device: "${device.name}" (${format.photoWidth}x${format.photoHeight} @ ${fps}fps)`,
-    );
-  } else {
-    console.log('re-rendering camera page without active camera');
-  }
-
   return (
     <View style={styles.container}>
       <PinchGestureHandler onGestureEvent={onPinchGesture} enabled={isActive}>
         <Reanimated.View style={StyleSheet.absoluteFill}>
-          <ReanimatedCamera
-            style={StyleSheet.absoluteFill}
-            device={device}
-            isActive={isActive}
-            animatedProps={animatedProps}
-            frameProcessor={frameProcessor}
-            frameProcessorFps={60}
-            fps={5}
-            animatedProps={cameraAnimatedProps}
-            onFrameProcessorSuggestionAvailable={onFrameProcessorSuggestionAvailable}
-            />
+          <TapGestureHandler onHandlerStateChange={onTapToFocus} numberOfTaps={1}>
+            <ReanimatedCamera
+              ref={camera}
+              style={StyleSheet.absoluteFill}
+              device={device}
+              isActive={isActive}
+              animatedProps={animatedProps}
+              frameProcessor={frameProcessor}
+              frameProcessorFps={60}
+              fps={5}
+              animatedProps={cameraAnimatedProps}
+              onFrameProcessorSuggestionAvailable={onFrameProcessorSuggestionAvailable}/>
+          </TapGestureHandler>
         </Reanimated.View>
       </PinchGestureHandler>
+      <Text style={styles.zoomAndTapInfo}>Pinch to zoom, Tap to focus</Text>
     </View>
   );
 }
@@ -160,18 +180,9 @@ const styles = StyleSheet.create({
   textStyle: {
     justifyContent: 'center',
   },
-  zoomButton: {
-    flex: 0,
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    padding: 15,
-    paddingHorizontal: 20,
-    alignSelf: 'center',
-    margin: 20,
-  },
-  zoomText: {
-    color: 'black',
-    fontSize: 12,
+  zoomAndTapInfo: {
+    color: 'white',
+    fontSize: 16,
     textAlign: 'center',
   },
 });
