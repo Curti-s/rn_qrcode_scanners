@@ -26,6 +26,7 @@ import Reanimated, {
   useAnimatedGestureHandler,
   Extrapolate,
   interpolate,
+  runOnJS,
 } from 'react-native-reanimated';
 import {
   PinchGestureHandler,
@@ -43,8 +44,10 @@ const MAX_ZOOM_FACTOR = 20;
 export default function VisionCameraScreen() {
   const camera = useRef(null);
   const [hasPermission, setHasPermission] = useState(false);
+  const [barcodeData, setBarcodeData] = useState(false);
   const [fps, setFps] = useState(30);
   const zoom = useSharedValue(0);
+  const code = useSharedValue(null);
 
   // check if screen is focused
   const isFocused = useIsFocused();
@@ -83,7 +86,13 @@ export default function VisionCameraScreen() {
     try {
       const startTime = Date.now();
       const qrCodes = scanQRcodes(frame);
-      console.log('Elapsed time: ', Date.now() - startTime, '[ms]' ,'frameProcessor results: ', qrCodes);
+
+      if(qrCodes.length && qrCodes[0].dataRaw) {
+        code.value = `Elapsed time: ${Date.now()-startTime}[ms] ${qrCodes[0].dataRaw}`;
+        runOnJS(setBarcodeData)(code.value);
+      }
+      console.log('Elapsed time: ', Date.now() - startTime, '[ms]' ,'frameProcessor results: ', qrCodes, ' code.value ', code.value);
+
     } catch (err) {
       console.error(`Frameprocessor failed: ${err}`);
     }
@@ -185,6 +194,7 @@ export default function VisionCameraScreen() {
         </Reanimated.View>
       </PinchGestureHandler>
       <Text style={styles.zoomAndTapInfo}>Pinch to zoom, Tap to focus</Text>
+      {barcodeData && <Text style={styles.barcodeDataInfo}>{`barcode: ${barcodeData}`}</Text>}
     </View>
   );
 }
@@ -201,5 +211,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
+  },
+  barcodeDataInfo: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    alignSelf: 'center',
   },
 });

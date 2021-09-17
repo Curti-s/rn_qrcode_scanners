@@ -1,8 +1,10 @@
-import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, { useState } from 'react';
+import {View, StyleSheet, Text} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 
 export default function CameraScreen({navigation}) {
+  const [barcodeData, setBarcodeData] = useState(null);
+
   if (!navigation.isFocused()) {
     return null;
   }
@@ -10,11 +12,16 @@ export default function CameraScreen({navigation}) {
   const onRead = ({ barcodes }) => {
     const startTime = Date.now();
     console.log();
-    console.log('Elapsed Time: ', Date.now() - startTime, '[ms], barcodes ', barcodes.map((i) => i.data));
+    const info = `Elapsed Time: ${Date.now() - startTime}'[ms], barcodes: ${barcodes.map((i) => i.data)}`;
+    if(barcodes.length) {
+      setBarcodeData(info);
+      console.log(info);
+    }
   }
 
   return (
     <View style={styles.container}>
+      {barcodeData && <Text style={styles.barcodeDataInfo}>{barcodeData}</Text>}
       <RNCamera
         style={styles.preview}
         type={RNCamera.Constants.Type.back}
@@ -51,5 +58,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: 'center',
     margin: 20,
+  },
+  barcodeDataInfo: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    alignSelf: 'center',
   },
 });
