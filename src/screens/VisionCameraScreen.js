@@ -3,12 +3,15 @@ import React, {
   useEffect,
   useCallback,
   useRef,
+  useMemo,
 } from 'react';
 import {
   Camera,
   useCameraDevices,
   useFrameProcessor,
   FrameProcessorPerformanceSuggestion,
+  sortFormats,
+  frameRateIncluded,
 } from 'react-native-vision-camera';
 import {
   View,
@@ -40,6 +43,7 @@ const MAX_ZOOM_FACTOR = 20;
 export default function VisionCameraScreen() {
   const camera = useRef(null);
   const [hasPermission, setHasPermission] = useState(false);
+  const [fps, setFps] = useState(30);
   const zoom = useSharedValue(0);
 
   // check if screen is focused
@@ -60,6 +64,18 @@ export default function VisionCameraScreen() {
   const devices = useCameraDevices();
   const backCamera = devices.back;
   const device = backCamera;
+
+  const formats = useMemo(() => {
+    if(device?.formats == null) return [];
+    return device.formats.sort(sortFormats);
+  }, [device?.formats]);
+
+  const format = useMemo(() => {
+    let results = formats;
+
+    // find the first format that includes the given fps
+    return results.find(f => f.frameRateRanges.some(r => frameRateIncluded(r, fps)))
+  }, [fps, formats]);
 
   // frameProcessor
   const frameProcessor = useFrameProcessor(frame => {
@@ -158,6 +174,8 @@ export default function VisionCameraScreen() {
               style={StyleSheet.absoluteFill}
               device={device}
               isActive={isActive}
+              fps={fps}
+              format={format}
               animatedProps={animatedProps}
               frameProcessor={frameProcessor}
               frameProcessorFps={30}
