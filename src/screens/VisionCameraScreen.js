@@ -98,11 +98,6 @@ export default function VisionCameraScreen() {
     }
   }, []);
 
-  // zoom
-  const animatedProps = useAnimatedProps(() => {
-    return {zoom: zoom.value};
-  }, [zoom]);
-
   //#region Animated Zoom
   // This just maps the zoom factor to a percentage value.
   // so e.g. for [min, neutr., max] values [1, 2, 128] this would result in [0, 0.0081, 1]
@@ -185,9 +180,8 @@ export default function VisionCameraScreen() {
               isActive={isActive}
               fps={fps}
               format={format}
-              animatedProps={animatedProps}
               frameProcessor={frameProcessor}
-              frameProcessorFps={30}
+              frameProcessorFps={fps}
               animatedProps={cameraAnimatedProps}
               onFrameProcessorSuggestionAvailable={onFrameProcessorSuggestionAvailable}/>
           </TapGestureHandler>
