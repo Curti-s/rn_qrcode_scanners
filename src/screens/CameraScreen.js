@@ -1,43 +1,51 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 
-export default function CameraScreen({navigation}) {
-  const [barcodeData, setBarcodeData] = useState(null);
+export default class CameraScreen extends Component {
+  state = {
+    barcodeData: null,
+  };
 
-  if (!navigation.isFocused()) {
-    return null;
-  }
+  onRead = ({ barcodes }) => {
+    const { navigation } = this.props;
 
-  const onRead = ({ barcodes }) => {
+    if (!navigation.isFocused()) return null;
+
     const startTime = Date.now();
     console.log();
     const info = `Elapsed Time: ${Date.now() - startTime}'[ms], barcodes: ${barcodes.map((i) => i.data)}`;
     if(barcodes.length) {
-      setBarcodeData(info);
+      this.setState({ barcodeData:info });
       console.log(info);
     }
   }
 
-  return (
-    <View style={styles.container}>
-      {barcodeData && <Text style={styles.barcodeDataInfo}>{barcodeData}</Text>}
-      <RNCamera
-        style={styles.preview}
-        type={RNCamera.Constants.Type.back}
-        flashMode={RNCamera.Constants.FlashMode.off}
-        androidCameraPermissionOptions={{
-          title: 'Permission to use camera',
-          message: 'Camera permissions required',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel',
-        }}
-        onGoogleVisionBarcodesDetected={onRead}
-        captureAudio={false}
-        useNativeZoom
-      />
-    </View>
-  );
+  render() {
+    const { barcodeData } = this.state;
+
+    return (
+      <View style={styles.container}>
+        {!!barcodeData && (
+          <Text style={styles.code}>{barcodeData}</Text>
+        )}
+        <RNCamera
+          style={styles.preview}
+          type={RNCamera.Constants.Type.back}
+          flashMode={RNCamera.Constants.FlashMode.off}
+          androidCameraPermissionOptions={{
+            title: 'Permission to use camera',
+            message: 'Camera permissions required',
+            buttonPositive: 'Ok',
+            buttonNegative: 'Cancel',
+          }}
+          onGoogleVisionBarcodesDetected={this.onRead}
+          captureAudio={false}
+          useNativeZoom
+        />
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -59,7 +67,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     margin: 20,
   },
-  barcodeDataInfo: {
+  code: {
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
