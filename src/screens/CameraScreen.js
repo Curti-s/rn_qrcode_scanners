@@ -1,10 +1,25 @@
 import React, { Component } from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Pressable,
+  Dimensions,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 
 export default class CameraScreen extends Component {
   state = {
     barcodeData: null,
+    autoFocus: 'on',
+    autoFocusPointOfInterest: {
+      normalised: { x: 0.5, y: 0.5 }, // normalized values required for autoFocusPointOfInterest
+      drawRectPosition: {
+        x: Dimensions.get('window').width * 0.5,
+        y: Dimensions.get('window').height * 0.5,
+      },
+    },
   };
 
   onRead = ({ barcodes }) => {
@@ -21,8 +36,15 @@ export default class CameraScreen extends Component {
     }
   }
 
+  toggleAutoFocus = () => this.setState({ autoFocus:this.state.autoFocus === 'on' ? 'off' : 'on' });
+
   render() {
     const { barcodeData } = this.state;
+
+    const drawFocusRingPosition = {
+      top: this.state.autoFocusPointOfInterest.drawRectPosition.y - 100,
+      left: this.state.autoFocusPointOfInterest.drawRectPosition.x - 32,
+    };
 
     return (
       <View style={styles.container}>
@@ -41,8 +63,29 @@ export default class CameraScreen extends Component {
           }}
           onGoogleVisionBarcodesDetected={this.onRead}
           captureAudio={false}
-          useNativeZoom
+          autoFocus={this.state.autoFocus}
+          autoFocusPointOfInterest={this.state.autoFocusPointOfInterest.normalised}
         />
+        <View style={StyleSheet.absoluteFill}>
+          <View style={[styles.autoFocusBox, drawFocusRingPosition]} />
+          <TouchableWithoutFeedback>
+            <View style={{ flex:1 }} />
+          </TouchableWithoutFeedback>
+        </View>
+        <View style={{ bottom:0 }}>
+          <View
+            style={{
+              height: 56,
+                backgroundColor: 'transparent',
+                flexDirection: 'row',
+                alignSelf: 'flex-end',
+            }}>
+              <Pressable
+                style={[styles.btn, { alignSelf:'flex-end'} ]} onPress={this.toggleAutoFocus}>
+                <Text style={[styles.txt]}>AF: {this.state.autoFocus}</Text>
+              </Pressable>
+          </View>
+        </View>
       </View>
     );
   }
@@ -52,6 +95,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'black',
+  },
+  btn: {
+    flex: 0.3,
+    height: 40,
+    marginHorizontal: 2,
+    marginBottom: 10,
+    marginTop: 10,
+    borderRadius: 8,
+    borderColor: 'white',
+    borderWidth: 1,
+    padding: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  txt: {
+    color:'white',
+    fontSize:15,
   },
   preview: {
     flex: 1,
@@ -72,5 +132,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     alignSelf: 'center',
+  },
+  autoFocusBox: {
+    position: 'absolute',
+    height: 64,
+    width: 64,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: 'white',
+    opacity: 0.4,
   },
 });
