@@ -23,9 +23,9 @@ export default class CameraScreen extends Component {
         y: Dimensions.get('window').height * 0.5,
       },
     },
-    focusDepth:0,
-    flash:'off',
-    zoom:0,
+    focusDepth: 0,
+    flash: 'off',
+    zoom: 0,
   };
 
   onRead = ({ barcodes }) => {
@@ -36,21 +36,22 @@ export default class CameraScreen extends Component {
     const startTime = Date.now();
     console.log();
     const info = `Elapsed Time: ${Date.now() - startTime}'[ms], barcodes: ${barcodes.map((i) => i.data)}`;
-    if(barcodes.length) {
-      this.setState({ barcodeData:info });
+    if (barcodes.length) {
+      this.setState({ barcodeData: info });
       console.log(info);
     }
   }
 
-  toggleAutoFocus = () => this.setState({ autoFocus:this.state.autoFocus === 'on' ? 'off' : 'on' });
+  toggleAutoFocus = () => this.setState({ autoFocus: this.state.autoFocus === 'on' ? 'off' : 'on' });
   toggleFocusDepth = () => {
-    this.setState({ autoFocus:'off', focusDepth:this.state.focusDepth + 0.5 });
-    if(this.state.focusDepth === 1.0) this.setState({ autoFocus:'on', focusDepth:0 });
+    this.setState({ autoFocus: 'off', focusDepth: this.state.focusDepth + 0.5 });
+    if (this.state.focusDepth === 1.0) this.setState({ autoFocus: 'on', focusDepth: 0 });
   }
-  toggleFlashMode = () => this.setState({ flash:this.state.flash === 'off' ? 'torch' : 'off' });
+  toggleFlashMode = () => this.setState({ flash: this.state.flash === 'off' ? 'torch' : 'off' });
   toggleZoom = () => {
-    this.setState({ zoom:this.state.zoom + 0.5 });
-    if(this.state.zoom === 1.0) this.setState({ zoom:0 });
+    this.setState({ zoom: this.state.zoom + 0.5 });
+    if (this.state.zoom === 1.0) this.setState({ zoom: 0 });
+  }
   onTapToFocus = (event) => {
     const { absoluteX, absoluteY, state, } = event.nativeEvent;
     const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
@@ -104,7 +105,7 @@ export default class CameraScreen extends Component {
           />
           <View style={StyleSheet.absoluteFill}>
             <View style={[styles.autoFocusBox, drawFocusRingPosition]} />
-              <View style={{ flex: 1 }} />
+            <View style={{ flex: 1 }} />
           </View>
           <View style={{ bottom: 0 }}>
             <View>
@@ -156,8 +157,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   txt: {
-    color:'white',
-    fontSize:12,
+    color: 'white',
+    fontSize: 12,
   },
   preview: {
     flex: 1,
