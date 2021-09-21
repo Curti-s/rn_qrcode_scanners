@@ -20,6 +20,7 @@ export default class CameraScreen extends Component {
         y: Dimensions.get('window').height * 0.5,
       },
     },
+    focusDepth:0,
   };
 
   onRead = ({ barcodes }) => {
@@ -37,6 +38,10 @@ export default class CameraScreen extends Component {
   }
 
   toggleAutoFocus = () => this.setState({ autoFocus:this.state.autoFocus === 'on' ? 'off' : 'on' });
+  toggleFocusDepth = () => {
+    this.setState({ autoFocus:'off', focusDepth:this.state.focusDepth + 0.5 });
+    if(this.state.focusDepth === 1.0) this.setState({ autoFocus:'on', focusDepth:0 });
+  }
 
   render() {
     const { barcodeData } = this.state;
@@ -65,6 +70,7 @@ export default class CameraScreen extends Component {
           captureAudio={false}
           autoFocus={this.state.autoFocus}
           autoFocusPointOfInterest={this.state.autoFocusPointOfInterest.normalised}
+          focusDepth={this.state.focusDepth}
         />
         <View style={StyleSheet.absoluteFill}>
           <View style={[styles.autoFocusBox, drawFocusRingPosition]} />
@@ -81,8 +87,12 @@ export default class CameraScreen extends Component {
                 alignSelf: 'flex-end',
             }}>
               <Pressable
-                style={[styles.btn, { alignSelf:'flex-end'} ]} onPress={this.toggleAutoFocus}>
-                <Text style={[styles.txt]}>AF: {this.state.autoFocus}</Text>
+                style={[styles.btn, { alignSelf:'flex-end'} ]} onPress={this.toggleAutoFocus} disabled={this.state.focusDepth}>
+                <Text style={[styles.txt]}>Auto Focus: {this.state.autoFocus}</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.btn, { alignSelf:'flex-end'} ]} onPress={this.toggleFocusDepth}>
+                <Text style={[styles.txt]}>Focus Depth: {this.state.focusDepth}</Text>
               </Pressable>
           </View>
         </View>
@@ -111,7 +121,7 @@ const styles = StyleSheet.create({
   },
   txt: {
     color:'white',
-    fontSize:15,
+    fontSize:12,
   },
   preview: {
     flex: 1,
