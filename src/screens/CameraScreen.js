@@ -55,7 +55,7 @@ export default class CameraScreen extends Component {
 
     const drawFocusRingPosition = {
       top: this.state.autoFocusPointOfInterest.drawRectPosition.y - 100,
-      left: this.state.autoFocusPointOfInterest.drawRectPosition.x - 32,
+      left: this.state.autoFocusPointOfInterest.drawRectPosition.x - 42,
     };
 
     return (
@@ -164,11 +164,12 @@ const styles = StyleSheet.create({
   },
   autoFocusBox: {
     position: 'absolute',
-    height: 64,
-    width: 64,
-    borderRadius: 12,
+    height: 100,
+    width: 100,
+    borderRadius: 16,
     borderWidth: 2,
     borderColor: 'white',
+    borderStyle: 'dashed',
     opacity: 0.4,
   },
 });
