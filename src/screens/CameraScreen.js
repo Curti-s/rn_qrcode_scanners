@@ -127,9 +127,12 @@ export default class CameraScreen extends Component {
                 <Text style={[styles.txt]}>Focus Depth: {this.state.focusDepth}</Text>
               </Pressable>
               <Pressable
-
                 style={[styles.btn, { alignSelf: 'flex-end' }]} onPress={this.toggleZoom}>
                 <Text style={[styles.txt]}>Zoom: {this.state.zoom}</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.btn, { alignSelf: 'flex-end' }]} onPress={this.toggleFlashMode}>
+                <Text style={[styles.txt]}>Flash: {this.state.flash}</Text>
               </Pressable>
             </View>
           </View>
@@ -159,7 +162,7 @@ const styles = StyleSheet.create({
   },
   txt: {
     color: 'white',
-    fontSize: 12,
+    fontSize: 10,
   },
   preview: {
     flex: 1,
