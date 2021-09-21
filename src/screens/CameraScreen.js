@@ -57,6 +57,7 @@ export default class CameraScreen extends Component {
     const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
     const isPortrait = screenHeight > screenWidth;
 
+    // normalising coords in portrait mode for RNCamera see: https://gist.github.com/Craigtut/6632a9ac7cfff55e74fb561862bc4edb
     let x, y, maxDeltaY;
     if (state === State.ACTIVE) {
       if (!isPortrait) {
