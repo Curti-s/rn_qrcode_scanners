@@ -110,11 +110,12 @@ export default class CameraScreen extends Component {
             <View style={[styles.autoFocusBox, drawFocusRingPosition]} />
             <View style={{ flex: 1 }} />
           </View>
-          <View style={{ 
-              flex: 0.1, 
-              backgroundColor: 'transparent', 
-              flexDirection: 'row', 
-              alignSelf: 'flex-end' }}>
+          <View style={{
+            flex: 0.1,
+            backgroundColor: 'transparent',
+            flexDirection: 'row',
+            alignSelf: 'flex-end'
+          }}>
             <Pressable
               style={[styles.btn, { alignSelf: 'flex-end' }]} onPress={this.toggleAutoFocus} disabled={this.state.focusDepth}>
               <Text style={[styles.txt]}>Auto Focus: {this.state.autoFocus}</Text>
