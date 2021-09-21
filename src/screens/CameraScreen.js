@@ -22,6 +22,7 @@ export default class CameraScreen extends Component {
     },
     focusDepth:0,
     flash:'off',
+    zoom:0,
   };
 
   onRead = ({ barcodes }) => {
@@ -44,6 +45,10 @@ export default class CameraScreen extends Component {
     if(this.state.focusDepth === 1.0) this.setState({ autoFocus:'on', focusDepth:0 });
   }
   toggleFlashMode = () => this.setState({ flash:this.state.flash === 'off' ? 'torch' : 'off' });
+  toggleZoom = () => {
+    this.setState({ zoom:this.state.zoom + 0.5 });
+    if(this.state.zoom === 1.0) this.setState({ zoom:0 });
+  }
 
   render() {
     const { barcodeData } = this.state;
@@ -74,6 +79,7 @@ export default class CameraScreen extends Component {
           autoFocusPointOfInterest={this.state.autoFocusPointOfInterest.normalised}
           focusDepth={this.state.focusDepth}
           flashMode={this.state.flash}
+          zoom={this.state.zoom}
         />
         <View style={StyleSheet.absoluteFill}>
           <View style={[styles.autoFocusBox, drawFocusRingPosition]} />
@@ -82,6 +88,8 @@ export default class CameraScreen extends Component {
           </TouchableWithoutFeedback>
         </View>
         <View style={{ bottom:0 }}>
+          <View>
+          </View>
           <View
             style={{
               height: 56,
@@ -100,6 +108,10 @@ export default class CameraScreen extends Component {
               <Pressable
                 style={[styles.btn, { alignSelf:'flex-end'} ]} onPress={this.toggleFlashMode}>
                 <Text style={[styles.txt]}>Flash: {this.state.flash}</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.btn, { alignSelf:'flex-end'} ]} onPress={this.toggleZoom}>
+                <Text style={[styles.txt]}>Zoom: {this.state.zoom}</Text>
               </Pressable>
           </View>
         </View>
