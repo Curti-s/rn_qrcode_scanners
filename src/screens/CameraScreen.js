@@ -37,7 +37,7 @@ export default class CameraScreen extends Component {
     console.log();
     const info = `Elapsed Time: ${Date.now() - startTime}'[ms], barcodes: ${barcodes.map((i) => i.data)}`;
     if (barcodes.length) {
-      this.setState({ barcodeData: info });
+      this.setState({ barcodeData: info, barcodes });
       console.log(info);
     }
   }
@@ -97,6 +97,8 @@ export default class CameraScreen extends Component {
               buttonNegative: 'Cancel',
             }}
             onGoogleVisionBarcodesDetected={this.onRead}
+            googleVisionBarcodeType={RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.QR_CODE}
+            googleVisionBarcodeMode={RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeMode.ALTERNATE}
             captureAudio={false}
             autoFocus={this.state.autoFocus}
             autoFocusPointOfInterest={this.state.autoFocusPointOfInterest.normalised}
@@ -108,33 +110,27 @@ export default class CameraScreen extends Component {
             <View style={[styles.autoFocusBox, drawFocusRingPosition]} />
             <View style={{ flex: 1 }} />
           </View>
-          <View style={{ bottom: 0 }}>
-            <View>
-            </View>
-            <View
-              style={{
-                height: 56,
-                backgroundColor: 'transparent',
-                flexDirection: 'row',
-                alignSelf: 'flex-end',
-              }}>
-              <Pressable
-                style={[styles.btn, { alignSelf: 'flex-end' }]} onPress={this.toggleAutoFocus} disabled={this.state.focusDepth}>
-                <Text style={[styles.txt]}>Auto Focus: {this.state.autoFocus}</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.btn, { alignSelf: 'flex-end' }]} onPress={this.toggleFocusDepth}>
-                <Text style={[styles.txt]}>Focus Depth: {this.state.focusDepth}</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.btn, { alignSelf: 'flex-end' }]} onPress={this.toggleZoom}>
-                <Text style={[styles.txt]}>Zoom: {this.state.zoom}</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.btn, { alignSelf: 'flex-end' }]} onPress={this.toggleFlashMode}>
-                <Text style={[styles.txt]}>Flash: {this.state.flash}</Text>
-              </Pressable>
-            </View>
+          <View style={{ 
+              flex: 0.1, 
+              backgroundColor: 'transparent', 
+              flexDirection: 'row', 
+              alignSelf: 'flex-end' }}>
+            <Pressable
+              style={[styles.btn, { alignSelf: 'flex-end' }]} onPress={this.toggleAutoFocus} disabled={this.state.focusDepth}>
+              <Text style={[styles.txt]}>Auto Focus: {this.state.autoFocus}</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.btn, { alignSelf: 'flex-end' }]} onPress={this.toggleFocusDepth}>
+              <Text style={[styles.txt]}>Focus Depth: {this.state.focusDepth}</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.btn, { alignSelf: 'flex-end' }]} onPress={this.toggleZoom}>
+              <Text style={[styles.txt]}>Zoom: {this.state.zoom}</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.btn, { alignSelf: 'flex-end' }]} onPress={this.toggleFlashMode}>
+              <Text style={[styles.txt]}>Flash: {this.state.flash}</Text>
+            </Pressable>
           </View>
         </View>
       </TapGestureHandler>
@@ -168,21 +164,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
-  },
-  capture: {
-    flex: 0,
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    padding: 15,
-    paddingHorizontal: 20,
-    alignSelf: 'center',
-    margin: 20,
-  },
-  code: {
-    color: 'white',
-    fontSize: 16,
-    textAlign: 'center',
-    alignSelf: 'center',
   },
   autoFocusBox: {
     position: 'absolute',
