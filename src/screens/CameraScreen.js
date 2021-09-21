@@ -72,9 +72,31 @@ export default class CameraScreen extends Component {
     }
   }
 
-  render() {
-    const { barcodeData } = this.state;
+  renderBarcodes = () => {
+    return (
+      <View style={styles.barcodeContainer}>
+      {!!this.state.barcodes && this.state.barcodes.map(this.renderBarcode)}
+      </View>
+    );
+  }
 
+  renderBarcode = ({ bounds, data }) => {
+    return (
+      <React.Fragment key={data + bounds.size}>
+        <View
+          style={[
+            styles.barcodeTextWrapper,
+            {
+              ...bounds.size,
+            },
+          ]}>
+          <Text style={styles.barcodeText}>{`${data}`}</Text>
+        </View>
+      </React.Fragment>
+    );
+  }
+
+  render() {
     const drawFocusRingPosition = {
       top: this.state.autoFocusPointOfInterest.drawRectPosition.y - 100,
       left: this.state.autoFocusPointOfInterest.drawRectPosition.x - 42,
@@ -83,9 +105,6 @@ export default class CameraScreen extends Component {
     return (
       <TapGestureHandler onHandlerStateChange={this.onTapToFocus} numberOfTaps={1} maxDeltaY={this.state.maxDeltaY}>
         <View style={styles.container}>
-          {!!barcodeData && (
-            <Text style={styles.code}>{barcodeData}</Text>
-          )}
           <RNCamera
             style={styles.preview}
             type={RNCamera.Constants.Type.back}
@@ -133,6 +152,7 @@ export default class CameraScreen extends Component {
               <Text style={[styles.txt]}>Flash: {this.state.flash}</Text>
             </Pressable>
           </View>
+          {this.renderBarcodes()}
         </View>
       </TapGestureHandler>
     );
@@ -175,5 +195,24 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderStyle: 'dashed',
     opacity: 0.4,
+  },
+  barcodeContainer: {
+    position: 'absolute',
+    alignSelf:'center'
+  },
+  barcodeTextWrapper: {
+    padding: 2,
+    borderWidth: 2,
+    borderRadius: 2,
+    position: 'absolute',
+    borderColor: '#F00',
+    justifyContent: 'center',
+  },
+  barcodeText: {
+    color: '#F00',
+    position: 'absolute',
+    textAlign: 'center',
+    backgroundColor: 'transparent',
+    fontSize:16,
   },
 });
