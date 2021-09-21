@@ -21,6 +21,7 @@ export default class CameraScreen extends Component {
       },
     },
     focusDepth:0,
+    flash:'off',
   };
 
   onRead = ({ barcodes }) => {
@@ -42,6 +43,7 @@ export default class CameraScreen extends Component {
     this.setState({ autoFocus:'off', focusDepth:this.state.focusDepth + 0.5 });
     if(this.state.focusDepth === 1.0) this.setState({ autoFocus:'on', focusDepth:0 });
   }
+  toggleFlashMode = () => this.setState({ flash:this.state.flash === 'off' ? 'torch' : 'off' });
 
   render() {
     const { barcodeData } = this.state;
@@ -71,6 +73,7 @@ export default class CameraScreen extends Component {
           autoFocus={this.state.autoFocus}
           autoFocusPointOfInterest={this.state.autoFocusPointOfInterest.normalised}
           focusDepth={this.state.focusDepth}
+          flashMode={this.state.flash}
         />
         <View style={StyleSheet.absoluteFill}>
           <View style={[styles.autoFocusBox, drawFocusRingPosition]} />
@@ -93,6 +96,10 @@ export default class CameraScreen extends Component {
               <Pressable
                 style={[styles.btn, { alignSelf:'flex-end'} ]} onPress={this.toggleFocusDepth}>
                 <Text style={[styles.txt]}>Focus Depth: {this.state.focusDepth}</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.btn, { alignSelf:'flex-end'} ]} onPress={this.toggleFlashMode}>
+                <Text style={[styles.txt]}>Flash: {this.state.flash}</Text>
               </Pressable>
           </View>
         </View>
