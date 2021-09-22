@@ -120,7 +120,7 @@ export default class CameraScreen extends Component {
               buttonNegative: 'Cancel',
             }}
             onGoogleVisionBarcodesDetected={this.onRead}
-            googleVisionBarcodeType={RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.QR_CODE}
+            googleVisionBarcodeType={RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.ALL}
             googleVisionBarcodeMode={RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeMode.ALTERNATE}
             captureAudio={false}
             autoFocus={this.state.autoFocus}
