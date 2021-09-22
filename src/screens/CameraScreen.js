@@ -106,6 +106,9 @@ export default class CameraScreen extends Component {
     return (
       <TapGestureHandler onHandlerStateChange={this.onTapToFocus} numberOfTaps={1} maxDeltaY={this.state.maxDeltaY}>
         <View style={styles.container}>
+          <View style={{ alignSelf:'center' }}>
+            <Text style={styles.txt}>Tap to focus</Text>
+          </View>
           <RNCamera
             style={styles.preview}
             type={RNCamera.Constants.Type.back}
