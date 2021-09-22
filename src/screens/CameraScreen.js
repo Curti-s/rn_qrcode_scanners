@@ -35,7 +35,6 @@ export default class CameraScreen extends Component {
     if (!navigation.isFocused()) return null;
 
     const startTime = Date.now();
-    console.log();
     const info = `Elapsed Time: ${Date.now() - startTime}'[ms], barcodes: ${barcodes.map((i) => i.data)}`;
     if (barcodes.length) {
       this.setState({ barcodeData: info, barcodes });
