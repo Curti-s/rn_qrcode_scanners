@@ -26,6 +26,7 @@ export default class CameraScreen extends Component {
     focusDepth: 0,
     flash: 'off',
     zoom: 0,
+    ratio:'4:3',
   };
 
   onRead = ({ barcodes }) => {
@@ -124,6 +125,7 @@ export default class CameraScreen extends Component {
             focusDepth={this.state.focusDepth}
             flashMode={this.state.flash}
             zoom={this.state.zoom}
+            ratio={this.state.ratio}
           />
           <View style={StyleSheet.absoluteFill}>
             <View style={[styles.autoFocusBox, drawFocusRingPosition]} />
