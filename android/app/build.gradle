@@ -213,6 +213,7 @@ dependencies {
     }
 
     implementation "androidx.camera:camera-core:1.1.0-alpha08"
+    implementation project(":react-native-hms-scan")
 }
 
 // Run this once to be able to run the application with BUCK
