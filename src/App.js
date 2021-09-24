@@ -14,6 +14,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import HomeScreen from './screens/HomeScreen';
 import VisionCameraScreen from './screens/VisionCameraScreen';
 import CameraScreen from './screens/CameraScreen';
+import HmsScanScreen from './screens/HmsScanScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,7 @@ export default function App() {
           <Stack.Screen name="Home" component={HomeScreen}/>
           <Stack.Screen name="Visioncamera" component={VisionCameraScreen}/>
           <Stack.Screen name="Camera" component={CameraScreen}/>
+          <Stack.Screen name="HmsCamera" component={HmsScanScreen}/>
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

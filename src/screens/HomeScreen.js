@@ -15,6 +15,11 @@ export default function HomeScreen({ navigation }) {
           title="Test with react native vision camera"
           onPress={() => navigation.navigate('Visioncamera')}/>
       </View>
+      <View style={{ padding:4, textAlign:'center' }}>
+        <Button 
+          title="Test with hms scan kit"
+          onPress={() => navigation.navigate('HmsCamera')}/>
+      </View>
     </View>
   );
 }
