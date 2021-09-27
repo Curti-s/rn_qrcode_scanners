@@ -1,6 +1,7 @@
 import React, {
   useState,
   useEffect,
+  useRef,
 } from 'react';
 import {
   StyleSheet,
@@ -14,12 +15,24 @@ export default function HmsScanScreen() {
   const [hasPermission, setHasPermission] = useState(false);
   const [barcodeInfo, setBarcodeInfo] = useState(null);
   const [timeTaken, setTimeTaken] = useState(0);
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    // track mounted state
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    }
+  }, []);
 
   useEffect(() => {
     // call requestCameraAndStoragePermission API
-    ScanPlugin.Permission.requestCameraAndStoragePermission()
-      .then(res => setHasPermission(res))
-      .catch(err => console.error(`Permission request failed: ${err}`));
+    if(isMounted.current) {
+      ScanPlugin.Permission.requestCameraAndStoragePermission()
+        .then(res => setHasPermission(res))
+        .catch(err => console.error(`Permission request failed: ${JSON.stringify(err)}`));
+    }
   }, [hasPermission]);
 
   const customizedViewRequest = {
@@ -42,7 +55,7 @@ export default function HmsScanScreen() {
           const elapsedTime = Date.now() - startTime;
           setTimeTaken(elapsedTime);
         })
-        .catch(err => console.error(`CustomizedView failed: ${err}`));
+        .catch(err => console.error(`CustomizedView failed: ${JSON.stringify(err)}`));
     }
   }
 
@@ -51,7 +64,7 @@ export default function HmsScanScreen() {
       <View style={{ flex:0.1, paddingTop:20 }}>
         <Text style={styles.txt}>Barcode: {!!barcodeInfo?.originalValue && barcodeInfo.originalValue} Elapsed time: {!!timeTaken ? timeTaken : 0}[ms]</Text>
       </View>
-      <View style={{ flex:0.1, flexDirection:'column', alignSelf:'center'}}>
+      <View style={{ flex:0.1, flexDirection:'row', alignSelf:'center'}}>
         <Pressable style={styles.btn} onPress={startCustomizedView}>
           <Text style={styles.txt}>Start scanning</Text>
         </Pressable>
