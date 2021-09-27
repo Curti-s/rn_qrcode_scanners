@@ -35,6 +35,14 @@ export default function HmsScanScreen() {
     }
   }, [hasPermission]);
 
+  useEffect(() => {
+    return () => {
+      if(isMounted.current) {
+        ScanPlugin.CustomizedView.allListenersRemove();
+      }
+    }
+  })
+
   const customizedViewRequest = {
     scanType: 0, // ScanPlugin.ScanType.All
     additionalScanTypes: [],
@@ -48,9 +56,9 @@ export default function HmsScanScreen() {
 
   const startCustomizedView = () => {
     if(hasPermission) {
-      const startTime = Date.now();
       ScanPlugin.CustomizedView.startCustomizedView(customizedViewRequest)
         .then(res => {
+          const startTime = Date.now();
           setBarcodeInfo(res);
           const elapsedTime = Date.now() - startTime;
           setTimeTaken(elapsedTime);
